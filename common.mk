@@ -437,6 +437,10 @@ PRODUCT_PACKAGES_DEBUG += \
 PRODUCT_PACKAGES += \
     android.hardware.usb@1.0-service
 
+# Vibrator
+PRODUCT_PACKAGES += \
+    vendor.qti.hardware.vibrator.service.oneplus_msmnile
+
 # Wifi
 PRODUCT_PACKAGES += \
     android.hardware.wifi@1.0-service \
