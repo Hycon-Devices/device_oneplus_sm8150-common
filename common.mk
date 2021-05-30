@@ -12,6 +12,9 @@ $(call inherit-product, vendor/oneplus/sm8150-common/sm8150-common-vendor.mk)
 # Project ID Quota
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
 
+# OnePlus Camera
+$(call inherit-product-if-exists, vendor/op-apps/config.mk)
+
 # Additional native libraries
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/public.libraries.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt
@@ -161,6 +164,7 @@ PRODUCT_PACKAGES += \
     libxml2 \
     Snap \
     vendor.oneplus.hardware.camera@1.0.vendor:64 \
+    vendor.oneplus.hardware.CameraMDMHIDL@1.0.vendor:64 \
     vendor.qti.hardware.camera.device@1.0.vendor:64
 
 # Common init scripts
@@ -170,6 +174,7 @@ PRODUCT_PACKAGES += \
     init.oem.debug.rc \
     init.oem.rc \
     init.oem_ftm.rc \
+    init.opcamera.rc \
     init.qcom.class_core.sh \
     init.qcom.early_boot.sh \
     init.qcom.factory.rc \
@@ -427,6 +432,7 @@ PRODUCT_PACKAGES += \
 
 # tri-state key
 PRODUCT_PACKAGES += \
+    KeyHandler \
     tri-state-key_daemon
 
 # Update engine
