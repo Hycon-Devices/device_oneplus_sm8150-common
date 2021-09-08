@@ -33,14 +33,6 @@
 #define OP_DISPLAY_NOTIFY_PRESS 9
 #define OP_DISPLAY_SET_DIM 10
 
-#define DC_DIM_PATH "/sys/class/drm/card0-DSI-1/dimlayer_bl_en"
-#define NATIVE_DISPLAY_LOADING_EFFECT "/sys/class/drm/card0-DSI-1/native_display_loading_effect_mode"
-#define NATIVE_DISPLAY_CUSTOMER_P3 "/sys/class/drm/card0-DSI-1/native_display_customer_p3_mode"
-#define NATIVE_DISPLAY_CUSTOMER_SRGB "/sys/class/drm/card0-DSI-1/native_display_customer_srgb_mode"
-#define NATIVE_DISPLAY_P3 "/sys/class/drm/card0-DSI-1/native_display_p3_mode"
-#define NATIVE_DISPLAY_SRGB "/sys/class/drm/card0-DSI-1/native_display_srgb_color_mode"
-#define NATIVE_DISPLAY_WIDE "/sys/class/drm/card0-DSI-1/native_display_wide_color_mode"
-
 namespace vendor {
 namespace lineage {
 namespace biometrics {
@@ -48,9 +40,6 @@ namespace fingerprint {
 namespace inscreen {
 namespace V1_0 {
 namespace implementation {
-
-int c_p3,c_srgb,p3,srgb,wide;
-bool dcDimState;
 
 /*
  * Write value to path and close file.
@@ -71,7 +60,6 @@ static T get(const std::string& path, const T& def) {
 }
 
 FingerprintInscreen::FingerprintInscreen() {
-    this->mFodCircleVisible = false;
     this->mVendorFpService = IVendorFingerprintExtensions::getService();
     this->mVendorDisplayService = IOneplusDisplay::getService();
 }
@@ -102,43 +90,12 @@ Return<void> FingerprintInscreen::onRelease() {
 }
 
 Return<void> FingerprintInscreen::onShowFODView() {
-    if (!mFodCircleVisible) {
-        c_p3 = get(NATIVE_DISPLAY_CUSTOMER_P3, 0);
-        c_srgb = get(NATIVE_DISPLAY_CUSTOMER_SRGB, 0);
-        p3 = get(NATIVE_DISPLAY_P3, 0);
-        srgb = get(NATIVE_DISPLAY_SRGB, 0);
-        wide = get(NATIVE_DISPLAY_WIDE, 0);
-        dcDimState = get(DC_DIM_PATH, 0);
-        set(DC_DIM_PATH, 0);
-        set(NATIVE_DISPLAY_SRGB, 0);
-        set(NATIVE_DISPLAY_P3, 0);
-        set(NATIVE_DISPLAY_CUSTOMER_P3, 0);
-        set(NATIVE_DISPLAY_CUSTOMER_SRGB, 0);
-        set(NATIVE_DISPLAY_LOADING_EFFECT, 1);
-        set(NATIVE_DISPLAY_WIDE, 1);
-    }
-    this->mFodCircleVisible = true;
     this->mVendorDisplayService->setMode(OP_DISPLAY_SET_DIM, 1);
 
     return Void();
 }
 
 Return<void> FingerprintInscreen::onHideFODView() {
-    if (mFodCircleVisible) {
-        set(NATIVE_DISPLAY_CUSTOMER_P3, 0);
-        set(NATIVE_DISPLAY_CUSTOMER_SRGB, 0);
-        set(NATIVE_DISPLAY_P3, 0);
-        set(NATIVE_DISPLAY_SRGB, 0);
-        set(NATIVE_DISPLAY_LOADING_EFFECT, 0);
-        set(NATIVE_DISPLAY_WIDE, 0);
-        set(NATIVE_DISPLAY_CUSTOMER_P3, c_p3);
-        set(NATIVE_DISPLAY_CUSTOMER_SRGB, c_srgb);
-        set(NATIVE_DISPLAY_P3, p3);
-        set(NATIVE_DISPLAY_SRGB, srgb);
-        set(NATIVE_DISPLAY_WIDE, wide);
-        set(DC_DIM_PATH, dcDimState);
-    }
-    this->mFodCircleVisible = false;
     this->mVendorDisplayService->setMode(OP_DISPLAY_AOD_MODE, 0);
     this->mVendorDisplayService->setMode(OP_DISPLAY_SET_DIM, 0);
     this->mVendorDisplayService->setMode(OP_DISPLAY_NOTIFY_PRESS, 0);
