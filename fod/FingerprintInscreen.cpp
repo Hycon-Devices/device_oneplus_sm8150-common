@@ -26,10 +26,7 @@
 
 #define OP_ENABLE_FP_LONGPRESS 3
 #define OP_DISABLE_FP_LONGPRESS 4
-#define OP_RESUME_FP_ENROLL 8
-#define OP_FINISH_FP_ENROLL 10
 
-#define OP_DISPLAY_AOD_MODE 8
 #define OP_DISPLAY_NOTIFY_PRESS 9
 #define OP_DISPLAY_SET_DIM 10
 
@@ -65,14 +62,13 @@ FingerprintInscreen::FingerprintInscreen() {
 }
 
 Return<void> FingerprintInscreen::onStartEnroll() {
-    this->mVendorFpService->updateStatus(OP_DISABLE_FP_LONGPRESS);
-    this->mVendorFpService->updateStatus(OP_RESUME_FP_ENROLL);
+    this->mVendorDisplayService->setMode(OP_DISPLAY_SET_DIM, 1);
 
     return Void();
 }
 
 Return<void> FingerprintInscreen::onFinishEnroll() {
-    this->mVendorFpService->updateStatus(OP_FINISH_FP_ENROLL);
+    this->mVendorDisplayService->setMode(OP_DISPLAY_SET_DIM, 0);
 
     return Void();
 }
@@ -96,9 +92,7 @@ Return<void> FingerprintInscreen::onShowFODView() {
 }
 
 Return<void> FingerprintInscreen::onHideFODView() {
-    this->mVendorDisplayService->setMode(OP_DISPLAY_AOD_MODE, 0);
     this->mVendorDisplayService->setMode(OP_DISPLAY_SET_DIM, 0);
-    this->mVendorDisplayService->setMode(OP_DISPLAY_NOTIFY_PRESS, 0);
 
     return Void();
 }
